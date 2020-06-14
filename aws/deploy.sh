@@ -6,8 +6,8 @@ set -e
 cd "${BASH_SOURCE%/*}"
 source ./config.sh
 
-AwsRegion=$(aws configure get region)
-AwsAccountId=$(aws sts get-caller-identity --output text --query Account)
+AwsRegion=$(aws configure get region --profile figgy-prod)
+AwsAccountId=$(aws sts get-caller-identity --output text --query Account --profile figgy-prod)
 
 # Build Lambda package
 rm -rf build
@@ -28,7 +28,7 @@ aws cloudformation package \
 	--template-file sam-template.json \
 	--output-template-file sam-output.yml \
 	--s3-bucket "${S3BucketArtifacts}" \
-	--s3-prefix "${S3PrefixArtifacts}"
+	--s3-prefix "${S3PrefixArtifacts}" --profile figgy-prod
 
 # Deploy CloudFormation stack
 aws cloudformation deploy \
@@ -42,9 +42,9 @@ aws cloudformation deploy \
 	InviteToken="${InviteToken}" \
 	RecaptchaSiteKey="${RecaptchaSiteKey}" \
 	RecaptchaSecretKey="${RecaptchaSecretKey}" \
-	Locale="${Locale}"
+	Locale="${Locale}" --profile figgy-prod
 
-Url=$(aws cloudformation describe-stacks --stack-name ${StackName} | grep OutputValue | cut -f 4 -d'"')
+Url=$(aws cloudformation describe-stacks --stack-name ${StackName} --profile figgy-prod | grep OutputValue | cut -f 4 -d'"')
 
 echo
 echo 'Deployed Slack Inviter!'

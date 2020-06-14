@@ -15,7 +15,7 @@ def brick(
     api = simple.api("api", "express", "0.1.2")
     func = simple.function(
         "func",
-        "nodejs8.10",
+        "nodejs12.x",
         assets["lambda.zip"],
         handler="lambda.handler",
         memory_size=1024,
